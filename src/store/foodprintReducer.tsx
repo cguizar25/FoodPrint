@@ -15,7 +15,7 @@ type State = {
   SET_ID: string
   RESET: {}
   SET_RECIPES: []
-  SET_RECIPE_RESULTS: any
+  SET_RECIPE_RESULTS: []
   SET_FAVORITES: []
   SET_INGREDIENTS: []
   SET_RECIPE_INFO: () => {}
@@ -58,7 +58,7 @@ type Action = { type: SET_ID, payload: string }
     case SET_RECIPE_RESULTS:
       return {
         ...state,
-        recipeResults: action.paylaod
+        recipeResults: action.payload
       }
     case SET_FAVORITES:
       return {

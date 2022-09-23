@@ -4,12 +4,13 @@ import { Recipe, IngredientSearch, IngredientSearchDefault } from '../models/rec
 import { RecipeInfo, RecipeInfoDefault } from '../models/recipeInfo';
 import { initialState, reducer } from './foodprintReducer';
 import { constants } from '../utils/Constants';
-import { fetchID } from '../utils/main';
+import { fetchID, fetchFormat } from '../utils/main';
 
 const {
   SET_ID,
   RESET,
   SET_RECIPES,
+  SET_RECIPE_RESULTS,
   SET_FAVORITES,
   SET_INGREDIENTS,
   SET_RECIPE_INFO,
@@ -98,14 +99,34 @@ const FoodprintContextProvider: React.FC = (props) => {
         }
       );
       const json = await result.json();
+      const id = {id: await fetchID(json.id)};
+      console.log(json, 'id', id);
+
 
       if (json.cookiePresent === true) {
+
+        const refresh = await fetchFormat('http://localhost:4000/refresh', 'POST', id);
+        const refreshJson = await refresh.json();
+        console.log(refreshJson)
+
         dispatch({
           type: SET_IS_LOGGED_IN,
           payload: true
         });
-      }
-    }
+        dispatch({
+          type: SET_ID,
+          payload: id.id
+        });
+        dispatch({
+          type: SET_INGREDIENTS,
+          payload: refreshJson.ingredients
+        });
+        dispatch({
+          type: SET_FAVORITES,
+          payload: refreshJson.favorites
+        })
+      };
+    };
 
     cookieCheck();
   }, []);
